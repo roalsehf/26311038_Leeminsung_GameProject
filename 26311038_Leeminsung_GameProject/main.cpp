@@ -1,6 +1,7 @@
 #include <glc2d.h>
 
 #include <cstdio>
+#include <string>
 
 #if defined(_DEBUG)
     #if defined(_M_X64)
@@ -29,12 +30,65 @@ enum class GameState
     BattlePreview
 };
 
+struct TextureResources
+{
+    int mainBackground = -1;
+    int battleBackground = -1;
+    int player = -1;
+};
+
+class Player
+{
+public:
+    void SetTexture(int textureKey)
+    {
+        textureKey_ = textureKey;
+    }
+
+    int GetHp() const
+    {
+        return hp_;
+    }
+
+    int GetMaxHp() const
+    {
+        return maxHp_;
+    }
+
+    int GetEnergy() const
+    {
+        return energy_;
+    }
+
+    void Draw() const
+    {
+        if (textureKey_ < 0)
+        {
+            return;
+        }
+
+        VEC2 position(650.0f, 225.0f);
+        VEC2 scale(0.26f, 0.26f);
+
+        g2_DrawAlphaOption(1);
+        g2_Draw2D(textureKey_, nullptr, &position, &scale);
+        g2_DrawAlphaOption(0);
+    }
+
+private:
+    int textureKey_ = -1;
+    int hp_ = 50;
+    int maxHp_ = 50;
+    int energy_ = 3;
+};
+
 GameState g_gameState = GameState::MainMenu;
 int g_selectedMenu = 0;
-int g_titleFont = -1;
 int g_headingFont = -1;
 int g_menuFont = -1;
 int g_bodyFont = -1;
+TextureResources g_textures;
+Player g_player;
 
 bool IsKeyPressed(const KEYCODE* keys, int key)
 {
@@ -44,6 +98,92 @@ bool IsKeyPressed(const KEYCODE* keys, int key)
 void RequestExit()
 {
     PostMessage(g2_GetHwnd(), WM_CLOSE, 0, 0);
+}
+
+std::string GetTexturePath(const char* fileName)
+{
+    char executablePath[MAX_PATH] = {};
+    const DWORD pathLength = GetModuleFileNameA(nullptr, executablePath, MAX_PATH);
+
+    if (pathLength == 0 || pathLength >= MAX_PATH)
+    {
+        return std::string("texture\\") + fileName;
+    }
+
+    std::string directory(executablePath, pathLength);
+    const std::string::size_type slashPosition = directory.find_last_of("\\/");
+
+    if (slashPosition != std::string::npos)
+    {
+        directory.erase(slashPosition + 1);
+    }
+    else
+    {
+        directory.clear();
+    }
+
+    return directory + "texture\\" + fileName;
+}
+
+bool LoadTextures()
+{
+    const std::string mainPath = GetTexturePath("Main.png");
+    const std::string battlePath = GetTexturePath("InGame.png");
+    const std::string playerPath = GetTexturePath("Player.png");
+
+    g_textures.mainBackground = g2_TextureLoad(mainPath.c_str());
+    g_textures.battleBackground = g2_TextureLoad(battlePath.c_str());
+    g_textures.player = g2_TextureLoad(playerPath.c_str());
+
+    if (g_textures.mainBackground < 0 ||
+        g_textures.battleBackground < 0 ||
+        g_textures.player < 0)
+    {
+        std::fprintf(stderr, "One or more texture files could not be loaded.\n");
+        return false;
+    }
+
+    g_player.SetTexture(g_textures.player);
+    return true;
+}
+
+void ReleaseTexture(int& textureKey)
+{
+    if (textureKey >= 0)
+    {
+        g2_TextureRelease(textureKey);
+        textureKey = -1;
+    }
+}
+
+void ReleaseTextures()
+{
+    ReleaseTexture(g_textures.player);
+    ReleaseTexture(g_textures.battleBackground);
+    ReleaseTexture(g_textures.mainBackground);
+}
+
+void DrawFullScreenTexture(int textureKey)
+{
+    if (textureKey < 0)
+    {
+        return;
+    }
+
+    const int textureWidth = g2_TextureWidth(textureKey);
+    const int textureHeight = g2_TextureHeight(textureKey);
+
+    if (textureWidth <= 0 || textureHeight <= 0)
+    {
+        return;
+    }
+
+    VEC2 position(0.0f, 0.0f);
+    VEC2 scale(
+        static_cast<float>(kScreenWidth) / static_cast<float>(textureWidth),
+        static_cast<float>(kScreenHeight) / static_cast<float>(textureHeight));
+
+    g2_Draw2D(textureKey, nullptr, &position, &scale);
 }
 
 void SelectMenuItem()
@@ -116,17 +256,7 @@ int FrameMove()
 
 void DrawMainMenu()
 {
-    g2_FontDrawText(
-        g_titleFont,
-        { 285, 45, 760, 105 },
-        0xFFD9B3FF,
-        "DUNGEON DECK");
-
-    g2_FontDrawText(
-        g_bodyFont,
-        { 350, 112, 760, 150 },
-        0xFFB8C5D6,
-        "TURN BASED CARD RPG");
+    DrawFullScreenTexture(g_textures.mainBackground);
 
     const char* menuItems[kMenuCount] =
     {
@@ -137,14 +267,14 @@ void DrawMainMenu()
 
     for (int index = 0; index < kMenuCount; ++index)
     {
-        const int top = 220 + index * 72;
+        const int top = 345 + index * 58;
         const DWORD color = index == g_selectedMenu
             ? 0xFFFFD166
             : 0xFFE6EDF3;
 
         g2_FontDrawText(
             g_menuFont,
-            { 405, top, 720, top + 48 },
+            { 410, top, 740, top + 44 },
             color,
             "%s",
             menuItems[index]);
@@ -152,23 +282,24 @@ void DrawMainMenu()
 
     g2_FontDrawText(
         g_bodyFont,
-        { 310, 510, 800, 548 },
-        0xFF8FB8DE,
+        { 345, 555, 875, 590 },
+        0xFFB8C5D6,
         "W, S or Arrow Keys: Move");
-
     g2_FontDrawText(
         g_bodyFont,
-        { 375, 552, 760, 590 },
-        0xFF8FB8DE,
+        { 390, 592, 830, 625 },
+        0xFFB8C5D6,
         "Enter: Select   Esc: Exit");
 }
 
 void DrawHowToPlay()
 {
+    DrawFullScreenTexture(g_textures.battleBackground);
+
     g2_FontDrawText(
         g_headingFont,
-        { 380, 40, 760, 90 },
-        0xFFD9B3FF,
+        { 380, 38, 760, 88 },
+        0xFFFFD166,
         "HOW TO PLAY");
 
     g2_FontDrawText(
@@ -195,76 +326,79 @@ void DrawHowToPlay()
         g_bodyFont,
         { 115, 312, 920, 347 },
         0xFFE6EDF3,
-        "Reach Stage 3 and defeat the Dungeon Warden to clear the game.");
-
+        "Defeat the Dungeon Warden in Stage 3 to clear the game.");
     g2_FontDrawText(
         g_bodyFont,
         { 115, 400, 920, 435 },
         0xFF70E000,
         "Starting HP: 50   Energy: 3   Hand: 5 cards");
-
     g2_FontDrawText(
         g_bodyFont,
         { 310, 550, 820, 590 },
-        0xFF8FB8DE,
+        0xFFB8C5D6,
         "Enter or Esc: Return to Main Menu");
 }
 
 void DrawBattlePreview()
 {
-    g2_FontDrawText(
-        g_headingFont,
-        { 390, 32, 760, 82 },
-        0xFFFFD166,
-        "BATTLE START");
+    DrawFullScreenTexture(g_textures.battleBackground);
+    g_player.Draw();
 
     g2_FontDrawText(
         g_headingFont,
-        { 95, 120, 450, 165 },
+        { 405, 28, 760, 78 },
+        0xFFFFD166,
+        "STAGE 1");
+
+    g2_FontDrawText(
+        g_headingFont,
+        { 75, 110, 450, 155 },
         0xFFFF7B7B,
         "TRAINING GOBLIN");
     g2_FontDrawText(
         g_bodyFont,
-        { 100, 178, 430, 213 },
+        { 80, 165, 430, 200 },
         0xFFE6EDF3,
         "HP: 32 / 32");
     g2_FontDrawText(
         g_bodyFont,
-        { 100, 220, 430, 255 },
+        { 80, 205, 430, 240 },
         0xFFE6EDF3,
         "Next Action: Attack 7");
 
     g2_FontDrawText(
         g_headingFont,
-        { 650, 120, 900, 165 },
+        { 720, 110, 960, 155 },
         0xFF48CAE4,
         "PLAYER");
     g2_FontDrawText(
         g_bodyFont,
-        { 650, 178, 950, 213 },
+        { 735, 165, 990, 200 },
         0xFFE6EDF3,
-        "HP: 50 / 50");
+        "HP: %d / %d",
+        g_player.GetHp(),
+        g_player.GetMaxHp());
     g2_FontDrawText(
         g_bodyFont,
-        { 650, 220, 950, 255 },
+        { 735, 205, 990, 240 },
         0xFFE6EDF3,
-        "Energy: 3 / 3");
+        "Energy: %d / 3",
+        g_player.GetEnergy());
 
     g2_FontDrawText(
         g_bodyFont,
-        { 285, 330, 850, 365 },
-        0xFFD9B3FF,
-        "Week 1 Battle Screen Prototype");
+        { 70, 455, 590, 490 },
+        0xFFFFD166,
+        "Week 2: Texture Load and Draw");
     g2_FontDrawText(
         g_bodyFont,
-        { 235, 380, 900, 415 },
+        { 70, 500, 600, 535 },
         0xFFB8C5D6,
-        "Card and turn systems will be connected in later logs.");
-
+        "Card battle rules will be connected next week.");
     g2_FontDrawText(
         g_bodyFont,
-        { 310, 550, 820, 590 },
-        0xFF8FB8DE,
+        { 310, 570, 820, 605 },
+        0xFFB8C5D6,
         "Enter or Esc: Return to Main Menu");
 }
 
@@ -319,20 +453,28 @@ int main()
         return 1;
     }
 
-    g_titleFont = g2_FontCreate("Arial", 40, 0);
     g_headingFont = g2_FontCreate("Arial", 30, 0);
     g_menuFont = g2_FontCreate("Arial", 27, 0);
     g_bodyFont = g2_FontCreate("Consolas", 20, 0);
 
-    if (g_titleFont < 0 || g_headingFont < 0 || g_menuFont < 0 || g_bodyFont < 0)
+    if (g_headingFont < 0 || g_menuFont < 0 || g_bodyFont < 0)
     {
         std::fprintf(stderr, "glc2d font creation failed.\n");
         g2_DestroyWin();
         return 1;
     }
 
-    std::printf("DUNGEON DECK started. Close the game window or press Esc to exit.\n");
+    if (!LoadTextures())
+    {
+        ReleaseTextures();
+        g2_DestroyWin();
+        return 1;
+    }
+
+    std::printf("DUNGEON DECK textures loaded. Close the game window or press Esc to exit.\n");
     const int runResult = g2_Run();
+
+    ReleaseTextures();
     g2_DestroyWin();
 
     if (runResult != 0)

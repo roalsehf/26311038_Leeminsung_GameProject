@@ -142,6 +142,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="texture\InGame.png" />
+    <None Include="texture\Main.png" />
+    <None Include="texture\Player.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -153,5 +156,12 @@
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <Error Condition="!Exists('$(SolutionDir)packages\glc2d.0.1.0.7\build\native\glc2d.props')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\glc2d.0.1.0.7\build\native\glc2d.props'))" />
     <Error Condition="!Exists('$(SolutionDir)packages\Microsoft.DXSDK.D3DX.9.29.952.8\build\native\Microsoft.DXSDK.D3DX.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\Microsoft.DXSDK.D3DX.9.29.952.8\build\native\Microsoft.DXSDK.D3DX.targets'))" />
+  </Target>
+  <Target Name="CopyTextureResources" AfterTargets="Build">
+    <ItemGroup>
+      <TextureFile Include="$(ProjectDir)texture\*.png" />
+    </ItemGroup>
+    <MakeDir Directories="$(OutDir)texture" />
+    <Copy SourceFiles="@(TextureFile)" DestinationFolder="$(OutDir)texture" SkipUnchangedFiles="true" />
   </Target>
 </Project>

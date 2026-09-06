@@ -21,5 +21,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="texture\InGame.png">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="texture\Main.png">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="texture\Player.png">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>
