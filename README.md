@@ -120,14 +120,20 @@ DUNGEON DECK은 제한된 Energy 안에서 공격, 방어, 보조 카드를 선�
 
 - glc2d를 이용한 게임 창과 메인 루프 생성
 - 글꼴 출력과 키보드 입력 처리
+- Main.png를 사용한 메인 메뉴 배경 출력
+- InGame.png를 사용한 설명 및 전투 배경 출력
+- Player.png를 사용한 플레이어 초상화 출력
+- 실행 파일 위치를 기준으로 한 텍스처 경로 처리
+- 빌드 결과 폴더로 texture 파일을 자동 복사하는 프로젝트 설정
 - GAME START, HOW TO PLAY, EXIT 메인 메뉴 구현
 - W, S, 방향키를 사용한 메뉴 이동 구현
 - Enter 선택과 Esc 이전 화면 또는 종료 기능 구현
 - 기본 규칙을 확인할 수 있는 HOW TO PLAY 화면 구현
 - 플레이어와 Training Goblin 정보를 표시하는 전투 미리보기 구현
 - 메뉴, 설명 화면, 전투 미리보기를 GameState로 구분
+- Player 클래스에 HP, 최대 HP, Energy, 텍스처 출력 기능 구현
 
-현재 GAME START는 전투 시스템 구현 전의 미리보기 화면으로 연결된다. 실제 카드 드로우, 카드 선택, Damage, Block, 적 턴, 보상 처리는 이후 주차에 순차적으로 구현한다.
+현재 GAME START는 이미지가 적용된 전투 미리보기 화면으로 연결된다. 2주차에는 기획서 완성 및 텍스처 삽입과 출력까지만 구현하며, 실제 카드 드로우, 카드 선택, Damage, Block, 적 턴, 보상 처리는 이후 주차에 순차적으로 구현한다.
 
 ## 주차별 구현 계획
 
@@ -140,8 +146,9 @@ DUNGEON DECK은 제한된 Energy 안에서 공격, 방어, 보조 카드를 선�
 ### 2주차
 
 - 게임 기획서 완성
-- GameManager, Player, Enemy, Card 기본 클래스 구현
-- 플레이어와 적 능력치 및 카드 데이터 구현
+- 메인 메뉴와 전투 화면 이미지 리소스 적용
+- Player 핵심 데이터와 텍스처 출력 기능 구현
+- glc2d 텍스처 로드, 크기 조절, 알파 출력, 해제 구현
 
 ### 3주차
 
@@ -161,7 +168,11 @@ DUNGEON DECK은 제한된 Energy 안에서 공격, 방어, 보조 카드를 선�
 - 26311038_Leeminsung_GameProject/26311038_Leeminsung_GameProject.vcxproj: C++ 프로젝트
 - 26311038_Leeminsung_GameProject/main.cpp: 게임 소스 코드
 - 26311038_Leeminsung_GameProject/packages.config: NuGet 패키지 정보
+- 26311038_Leeminsung_GameProject/texture/Main.png: 메인 메뉴 배경
+- 26311038_Leeminsung_GameProject/texture/InGame.png: 전투 화면 배경
+- 26311038_Leeminsung_GameProject/texture/Player.png: 플레이어 초상화
 - docs/GAME_DESIGN.md: 전체 게임 기획서
+- docs/GameDesign.pdf: 2주차 제출용 게임 기획서
 - .gitignore: Git 제외 파일 규칙
 
 ## 준비 자료
@@ -190,3 +201,10 @@ DUNGEON DECK은 제한된 Energy 안에서 공격, 방어, 보조 카드를 선�
 - 저장소 이름: 26311038_Leeminsung_GameProject
 - 프로젝트 이름: 26311038_Leeminsung_GameProject
 - Git Tag: 26311038_Leeminsung_GameProject_w01
+
+## 2주차 제출 정보
+
+- 완성된 게임 기획서: docs/GameDesign.pdf
+- 현재 C++ 소스 코드와 Visual Studio 프로젝트 전체 포함
+- 이미지 리소스: 26311038_Leeminsung_GameProject/texture
+- Git Tag: w02

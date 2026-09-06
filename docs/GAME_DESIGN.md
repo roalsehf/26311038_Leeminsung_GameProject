@@ -2,99 +2,105 @@
 
 ## 1. 프로젝트 기본 정보
 
+- 학번: 26311038
+- 이름: 이민성
 - 프로젝트 이름: 26311038_Leeminsung_GameProject
 - 게임 제목: DUNGEON DECK
 - 장르: 턴제 덱빌딩 카드 RPG
+- 플레이 인원: 1명
 - 개발 언어: C++17
 - 그래픽 라이브러리: glc2d
 - 개발 도구: Visual Studio 2022 Community
 - 버전 관리: Git, GitHub
-- 개발 기간: 4주
+- 전체 개발 기간: 4주
 
-## 2. 기획 의도
+## 2. 게임 개요
 
-DUNGEON DECK은 제한된 Energy 안에서 공격, 방어, 드로우 카드를 선택해 적을 쓰러뜨리는 턴제 카드 RPG이다. 초반에는 카드 3종과 적 3단계만 사용하여 전투 규칙을 명확하게 구현하고, 개발이 진행되면 카드와 시각 리소스를 추가한다.
+DUNGEON DECK은 제한된 Energy 안에서 공격, 방어, 보조 카드를 선택해 던전의 적을 쓰러뜨리는 턴제 카드 RPG이다. 플레이어는 적이 다음 턴에 사용할 행동을 미리 확인하고 손패의 카드를 적절한 순서로 사용한다. Stage 1과 Stage 2를 통과해 덱을 강화하고, Stage 3의 Dungeon Warden을 처치하면 게임을 완료한다.
 
-이 게임을 통해 다음 내용을 구현하고 학습한다.
+화면 이동과 카드 선택은 키보드로 처리한다. 카드 전투에 집중하기 위해 맵 이동, 장비, 상점, 저장 기능은 제작 범위에서 제외한다.
 
-- glc2d를 사용한 게임 화면 출력
-- 키보드 입력과 화면 상태 전환
-- C++ 클래스와 enum class를 사용한 게임 구조
-- 덱, 손패, 버림 더미 자료구조
-- 턴, Energy, Block, Damage 처리
-- 적 행동 예고와 반복 패턴
-- Git Commit과 주차별 Tag를 이용한 개발 과정 관리
+## 3. 게임 목적과 핵심 재미
 
-## 3. 전체 게임 흐름
+게임의 최종 목적은 플레이어 HP가 0이 되기 전에 3개 Stage의 적을 모두 처치하는 것이다.
 
-1. 메인 메뉴를 표시한다.
-2. GAME START를 선택한다.
-3. Stage 1 전투를 시작한다.
-4. 플레이어가 카드 5장을 드로우한다.
-5. 플레이어가 Energy를 사용하여 카드를 낸다.
-6. 플레이어가 턴을 종료한다.
-7. 적이 예고한 행동을 실행한다.
-8. 한쪽 HP가 0이 될 때까지 플레이어 턴과 적 턴을 반복한다.
-9. 승리하면 보상 카드를 선택한다.
-10. 다음 Stage를 시작한다.
-11. Stage 3의 Dungeon Warden을 처치하면 GAME CLEAR를 표시한다.
-12. 플레이어 HP가 0이 되면 GAME OVER를 표시한다.
-13. Enter를 누르면 플레이 데이터를 초기화하고 메인 메뉴로 돌아간다.
+핵심 재미는 다음과 같다.
 
-## 4. 게임 상태
+- 적 Intent를 확인하고 공격과 방어 중 필요한 행동을 판단한다.
+- 한 턴에 사용할 수 있는 Energy 3을 카드 순서에 맞게 배분한다.
+- 전투 보상으로 카드를 선택하여 다음 전투에 사용할 덱을 강화한다.
+- 최종 점수를 높이기 위해 가능한 많은 HP를 남긴 채 빠르게 전투를 끝낸다.
 
-게임 상태는 여러 bool 변수가 아니라 enum class로 구분한다.
+## 4. 제작 범위와 완성 가능성
 
-```cpp
-enum class GameState
-{
-    MainMenu,
-    HowToPlay,
-    Battle,
-    Reward,
-    GameOver,
-    GameClear,
-    Exit
-};
-```
+남은 기간 안에 완성할 수 있도록 기능을 다음 범위로 제한한다.
 
-1주차 프로토타입에는 MainMenu, HowToPlay, BattlePreview 상태를 먼저 구현한다. 이후 주차에 Battle, Reward, GameOver, GameClear 상태를 연결한다.
+- 플레이어 캐릭터 1종
+- 적 3종과 Stage 3개
+- 기본 카드 Strike, Guard, Focus 3종
+- 카드 보상은 기존 카드 3종 중 1장 추가
+- 키보드 입력만 사용
+- 메인 메뉴, 설명, 전투, 보상, 게임 오버, 게임 클리어 화면
+- 로컬 싱글 플레이만 지원
 
-## 5. 메인 메뉴
+다음 기능은 구현하지 않는다.
 
-메뉴 항목은 다음과 같다.
+- 자유 이동 맵과 충돌 장애물
+- 인벤토리와 장비
+- 상점과 화폐
+- 세이브와 로드
+- 온라인 기능
+- 복잡한 상태 이상과 카드 강화 트리
 
-1. GAME START
-2. HOW TO PLAY
-3. EXIT
+## 5. 게임 시작 조건
 
-조작 방법은 다음과 같다.
+- 프로그램 실행 후 메인 메뉴가 표시되어야 한다.
+- 메인 메뉴에서 GAME START를 선택하고 Enter를 누르면 게임을 시작한다.
+- 게임 시작 시 플레이어 HP는 50, Energy는 3, Block은 0으로 초기화한다.
+- Strike 5장, Guard 4장, Focus 1장으로 시작 덱을 만든다.
+- 시작 덱을 섞은 뒤 Stage 1 Training Goblin 전투를 시작한다.
+- 첫 플레이어 턴에 카드 5장을 뽑는다.
 
-- W 또는 위 방향키: 위 항목 이동
-- S 또는 아래 방향키: 아래 항목 이동
-- Enter: 선택
-- Esc: 이전 화면 또는 종료
+## 6. 게임 종료 조건
 
-선택된 메뉴는 glc2d 글꼴의 색상을 변경하여 구분한다. Windows Console API와 system 함수를 사용하지 않는다.
+게임 클리어 조건은 Stage 3의 Dungeon Warden HP를 0 이하로 만드는 것이다. 조건을 만족하면 GAME CLEAR 화면과 최종 점수를 표시한다.
 
-## 6. 플레이어 규칙
+게임 실패 조건은 플레이어 HP가 0 이하가 되는 것이다. 조건을 만족하면 GAME OVER 화면과 획득한 점수를 표시한다.
 
-- 최대 HP: 50
-- 시작 HP: 50
-- 최대 Energy: 3
-- 턴 시작 Energy: 3
-- 시작 Block: 0
-- 기본 손패: 5장
+GAME CLEAR 또는 GAME OVER 화면에서 Enter를 누르면 전투 데이터와 점수를 초기화하고 메인 메뉴로 돌아간다. 메인 메뉴에서 EXIT를 선택하거나 Esc를 누르면 프로그램을 종료한다.
 
-플레이어 턴 시작 시 처리 순서는 다음과 같다.
+## 7. 조작 방법
 
-1. Energy를 최대값까지 회복한다.
-2. Block을 0으로 초기화한다.
-3. 카드 5장을 손패로 가져온다.
+### 현재 구현된 조작
 
-피해를 받으면 Block이 먼저 피해를 흡수한다. 남은 피해만 HP에서 감소한다. HP와 Energy는 0보다 작아지지 않도록 처리한다.
+- W 또는 위 방향키: 메뉴의 위 항목 선택
+- S 또는 아래 방향키: 메뉴의 아래 항목 선택
+- Enter: 메뉴 선택, 이전 화면으로 돌아가기
+- Esc: 이전 화면으로 돌아가기 또는 프로그램 종료
 
-## 7. 시작 덱
+### 전투 구현 시 사용할 조작
+
+- 숫자 1부터 5: 해당 위치의 손패 카드 사용
+- E: 플레이어 턴 종료
+- Esc: 전투 중에는 종료 확인, 결과 화면에서는 메인 메뉴 이동
+
+카드 RPG이므로 플레이어 캐릭터의 실시간 방향 이동은 사용하지 않는다. 입력은 메뉴 이동, 카드 선택, 턴 종료에만 사용한다.
+
+## 8. 기본 게임 규칙
+
+- 플레이어 최대 HP는 50이다.
+- 플레이어 최대 Energy는 3이다.
+- 매 플레이어 턴 시작 시 Energy를 3으로 회복한다.
+- 매 플레이어 턴 시작 시 Block을 0으로 초기화한다.
+- 기본 손패는 5장이다.
+- 카드를 사용하면 카드 비용만큼 Energy가 감소한다.
+- Energy가 부족한 카드는 사용할 수 없다.
+- 플레이어가 받는 Damage는 Block에서 먼저 차감하고 남은 수치만 HP에서 차감한다.
+- 적도 Block을 보유할 수 있으며 Damage는 적 Block에서 먼저 차감한다.
+- 플레이어와 적의 HP, Block, Energy는 0보다 작아지지 않도록 처리한다.
+- 적의 다음 행동은 Intent로 미리 표시한다.
+
+## 9. 카드와 덱 규칙
 
 시작 덱은 총 10장이다.
 
@@ -102,304 +108,276 @@ enum class GameState
 - Guard 4장
 - Focus 1장
 
+카드 정보는 다음과 같다.
+
 ### Strike
 
 - 종류: Attack
-- 비용: 1
-- 효과: 적에게 6 Damage
-- 설명: Deal 6 damage.
+- 비용: Energy 1
+- 효과: 적에게 Damage 6
 
 ### Guard
 
 - 종류: Skill
-- 비용: 1
+- 비용: Energy 1
 - 효과: 플레이어 Block 5 증가
-- 설명: Gain 5 Block.
 
 ### Focus
 
 - 종류: Skill
-- 비용: 0
+- 비용: Energy 0
 - 효과: 카드 1장 추가 드로우
-- 설명: Draw 1 card.
 
-카드 효과는 카드 이름 문자열을 비교하는 방식으로 처리하지 않는다. CardType과 카드 데이터에 저장된 Damage, Block, DrawCount를 사용한다.
+덱은 DrawPile, Hand, DiscardPile로 구분한다. 전투 시작 시 덱을 섞어 DrawPile에 넣는다. 카드를 사용하면 Hand에서 제거해 DiscardPile로 이동한다. 턴 종료 시 남은 Hand 카드도 DiscardPile로 이동한다. DrawPile이 부족하면 DiscardPile을 다시 섞어 새로운 DrawPile로 사용한다.
 
-## 8. 덱 규칙
+## 10. 점수와 승부 규칙
 
-Deck 클래스는 다음 영역을 관리한다.
+전투 승리 시 Stage 기본 점수와 남은 HP 보너스를 합산한다.
 
-- DrawPile
-- Hand
-- DiscardPile
+- Stage 1 클리어 기본 점수: 1000점
+- Stage 2 클리어 기본 점수: 1500점
+- Stage 3 클리어 기본 점수: 2500점
+- 각 Stage 종료 시 남은 HP 1당 보너스: 10점
+- 카드 사용 자체에는 점수 증감이 없다.
+- 패배하면 그 시점까지 획득한 점수를 GAME OVER 화면에 표시한다.
+- Stage 3까지 승리하면 누적 점수를 최종 점수로 표시한다.
 
-전투 시작 시 시작 덱을 생성하고 std::shuffle로 섞는다. 난수 엔진은 Deck이 보관하며 매 함수 호출마다 새로운 시드를 만들지 않는다.
+승부는 점수와 관계없이 HP로 결정한다. 적 HP가 먼저 0이 되면 해당 전투 승리, 플레이어 HP가 먼저 0이 되면 게임 패배이다.
 
-카드를 사용하면 Hand에서 제거하여 DiscardPile로 이동한다. 턴 종료 시 남은 Hand 카드도 DiscardPile로 이동한다. DrawPile이 부족하면 DiscardPile을 DrawPile로 이동하고 다시 섞은 다음 필요한 수만큼 드로우한다.
+## 11. 플레이어 행동
 
-## 9. 적 규칙
+- 현재 손패에서 사용할 카드를 선택한다.
+- Strike로 적에게 Damage를 준다.
+- Guard로 Block을 얻는다.
+- Focus로 카드를 추가로 뽑는다.
+- 더 사용할 카드가 없거나 전략적으로 턴을 넘길 때 E를 눌러 턴을 종료한다.
+- 적의 공격을 받은 뒤 HP가 남아 있으면 다음 플레이어 턴을 시작한다.
+
+Player 객체가 관리할 데이터는 현재 HP, 최대 HP, Energy, 최대 Energy, Block, 누적 점수, 플레이어 텍스처이다. 2주차 코드에는 HP, 최대 HP, Energy, 텍스처와 출력 기능을 우선 반영한다.
+
+## 12. 적, 장애물, 아이템 행동
 
 ### Stage 1 Training Goblin
 
 - 최대 HP: 32
-- 행동 1: Attack 7
-- 행동 2: Defend 5
-- 행동 3: Heavy Attack 11
-- 행동 4: 행동 1부터 반복
+- 행동 순서: Attack 7, Defend 5, Heavy Attack 11
+- 세 행동을 사용한 뒤 처음부터 반복한다.
 
 ### Stage 2 Armored Goblin
 
 - 최대 HP: 45
-- 행동 1: Attack 8
-- 행동 2: Defend 6
-- 행동 3: Heavy Attack 12
-- 행동 4: 행동 1부터 반복
+- 행동 순서: Attack 8, Defend 6, Heavy Attack 12
+- 세 행동을 사용한 뒤 처음부터 반복한다.
 
 ### Stage 3 Dungeon Warden
 
 - 최대 HP: 65
-- 행동 1: Attack 8
-- 행동 2: Defend 7
-- 행동 3: Heavy Attack 14
-- 행동 4: Attack 8
-- 행동 5: 행동 1부터 반복
+- 행동 순서: Attack 8, Defend 7, Heavy Attack 14, Attack 8
+- 네 행동을 사용한 뒤 처음부터 반복한다.
 
-적은 다음 행동을 Intent로 미리 표시한다. 행동은 EnemyActionType enum class와 turnCount로 결정한다. 행동 이름 문자열을 비교하여 로직을 실행하지 않는다.
+적은 자신의 턴이 되면 화면에 표시된 Intent와 같은 행동을 실행한다. Defend 행동은 적 Block을 증가시키고 Attack 행동은 플레이어에게 Damage를 준다.
 
-## 10. 전투 조작
+자유 이동 맵을 사용하지 않으므로 물리적인 장애물은 없다. 아이템 역할은 전투 승리 후 받는 카드 보상이 담당한다. Stage 1과 Stage 2 승리 후 Strike, Guard, Focus 중 한 장을 선택하면 다음 Stage부터 덱에 추가된다.
 
-- 숫자 1부터 5: 해당 위치의 손패 카드 사용
-- E: 플레이어 턴 종료
-- Esc: 필요한 경우 이전 화면으로 이동
-
-손패보다 큰 번호를 선택하면 게임을 종료하지 않고 안내 메시지를 표시한다. Energy가 부족한 카드를 선택하면 카드를 제거하지 않고 Not enough Energy 메시지를 표시한다.
-
-## 11. 카드 사용 처리
-
-### Strike 처리
-
-1. Energy가 1 이상인지 확인한다.
-2. Energy를 1 감소시킨다.
-3. 적 Block과 HP에 6 Damage를 적용한다.
-4. Strike를 Hand에서 제거한다.
-5. Strike를 DiscardPile로 이동한다.
-
-### Guard 처리
-
-1. Energy가 1 이상인지 확인한다.
-2. Energy를 1 감소시킨다.
-3. 플레이어 Block을 5 증가시킨다.
-4. Guard를 Hand에서 제거한다.
-5. Guard를 DiscardPile로 이동한다.
-
-### Focus 처리
-
-1. Energy 감소 없이 카드 1장을 추가 드로우한다.
-2. Focus를 Hand에서 제거한다.
-3. Focus를 DiscardPile로 이동한다.
-
-## 12. 턴 처리
-
-플레이어가 E를 누르면 다음 순서로 처리한다.
-
-1. 손에 남은 카드를 모두 DiscardPile로 이동한다.
-2. 적이 현재 Intent에 해당하는 행동을 실행한다.
-3. 다음 적 Intent를 계산한다.
-4. 플레이어와 적의 HP를 확인한다.
-5. 전투가 계속되면 새로운 플레이어 턴을 시작한다.
-
-## 13. 보상과 Stage
-
-적을 처치하면 Strike, Guard, Focus 중 카드 1장을 선택한다. 선택한 카드는 플레이어의 영구 덱에 추가된다.
-
-- Stage 1 승리 후 카드 보상 선택
-- Stage 2 승리 후 카드 보상 선택
-- Stage 3 승리 후 GAME CLEAR
-
-플레이어 HP는 첫 프로토타입에서 Stage 사이에 유지한다. 밸런스 테스트 결과에 따라 회복 보상을 추가할 수 있다.
-
-## 14. 화면 구성
+## 13. 게임 화면 구성
 
 ### 메인 메뉴 화면
 
-- 게임 제목
-- 장르 설명
-- GAME START
-- HOW TO PLAY
-- EXIT
-- 조작 안내
+- Main.png 전체 화면 배경
+- 배경 이미지에 포함된 DUNGEON DECK 제목
+- GAME START, HOW TO PLAY, EXIT 메뉴
+- 현재 선택된 메뉴 색상 표시
+- 키보드 조작 안내
+
+### 설명 화면
+
+- InGame.png 전체 화면 배경
+- 카드 드로우, Energy, 카드 효과, 승리 조건 안내
+- Enter 또는 Esc 복귀 안내
 
 ### 전투 화면
 
+- InGame.png 전체 화면 배경
 - Stage 번호
-- 적 이름, HP, Block
-- 적의 다음 Intent
-- 플레이어 HP, Block, Energy
-- 현재 손패 카드
-- 카드 비용과 효과
-- 입력 안내
+- 적 이름, HP, Block, 다음 Intent
+- Player.png 플레이어 초상화
+- 플레이어 HP, Block, Energy, 점수
+- 손패 카드 최대 5장과 카드 비용
 - 최근 행동 결과 메시지
+- END TURN 안내
 
 ### 보상 화면
 
-- BATTLE WIN
-- 처치한 적 이름
-- 선택 가능한 카드 3종
-- 선택 입력 안내
+- 전투 승리 문구와 획득 점수
+- Strike, Guard, Focus 카드 선택 항목
+- 다음 Stage 안내
 
-## 15. 클래스 구성 계획
+### 결과 화면
 
-불필요한 파일을 한 번에 만들지 않고 해당 기능을 구현하는 주차에 추가한다.
+- GAME OVER 또는 GAME CLEAR 문구
+- 최종 점수
+- Enter 입력 시 메인 메뉴 이동 안내
+
+## 14. 게임 진행 흐름
+
+1. 프로그램을 실행한다.
+2. 메인 메뉴에서 GAME START를 선택한다.
+3. 플레이어와 시작 덱을 초기화한다.
+4. Stage 1 전투를 시작한다.
+5. 플레이어가 카드 5장을 뽑고 카드를 사용한다.
+6. E를 누르면 적이 Intent에 표시된 행동을 실행한다.
+7. 한쪽 HP가 0이 될 때까지 턴을 반복한다.
+8. 승리하면 점수를 계산하고 보상 카드를 선택한다.
+9. Stage 2와 Stage 3을 같은 흐름으로 진행한다.
+10. 플레이어가 사망하면 GAME OVER 화면으로 이동한다.
+11. Dungeon Warden을 처치하면 GAME CLEAR 화면으로 이동한다.
+12. Enter를 누르면 데이터를 초기화하고 메인 메뉴로 돌아간다.
+
+## 15. 주요 게임 객체 목록
+
+### GameState
+
+- 역할: MainMenu, HowToPlay, Battle, Reward, GameOver, GameClear 상태 구분
+- 현재 상태에 따라 입력과 출력 함수를 선택한다.
+
+### TextureResources
+
+- 역할: Main.png, InGame.png, Player.png의 glc2d 텍스처 키 관리
+- 프로그램 시작 시 로드하고 종료 전에 해제한다.
+
+### Player
+
+- 데이터: HP, 최대 HP, Energy, 최대 Energy, Block, 점수, 텍스처
+- 기능: 초기화, Damage 적용, Block 증가, Energy 사용, 점수 추가, 화면 출력
+- 2주차 구현: HP, 최대 HP, Energy, 텍스처 설정과 출력
+
+### Card
+
+- 데이터: 종류, 비용, Damage, Block, DrawCount
+- 기능: 카드 데이터 제공과 효과 적용
+
+### Deck
+
+- 데이터: DrawPile, Hand, DiscardPile
+- 기능: 초기 덱 생성, 섞기, 드로우, 사용 카드 버리기, 덱 재구성
+
+### Enemy
+
+- 데이터: 이름, HP, 최대 HP, Block, 행동 패턴, 턴 수
+- 기능: Intent 계산, 공격, 방어, Damage 적용
+
+### BattleManager
+
+- 역할: 플레이어 턴, 적 턴, 카드 사용, 승패 판정 처리
+
+### StageManager
+
+- 역할: Stage 번호, 적 생성, 다음 Stage 이동, 게임 클리어 판정
+
+### RewardManager
+
+- 역할: 보상 카드 표시와 선택 결과를 플레이어 덱에 추가
+
+## 16. 필요한 이미지 리소스 목록
+
+현재 저장소에 포함하고 화면에 적용한 이미지는 다음과 같다.
+
+- texture/Main.png: 메인 메뉴 전체 화면 배경, 적용 완료
+- texture/InGame.png: 설명 화면과 전투 화면 배경, 적용 완료
+- texture/Player.png: 전투 화면 플레이어 초상화, 적용 완료
+
+추가로 필요한 이미지는 다음과 같다.
+
+- texture/TrainingGoblin.png: Stage 1 적
+- texture/ArmoredGoblin.png: Stage 2 적
+- texture/DungeonWarden.png: Stage 3 보스
+- texture/CardStrike.png: 공격 카드
+- texture/CardGuard.png: 방어 카드
+- texture/CardFocus.png: 드로우 카드
+- texture/CardFrame.png: 카드 공통 테두리
+- texture/ResultPanel.png: 보상과 결과 화면 배경
+
+적과 카드 이미지는 3주차에 준비한다. 현재 제공된 우주 슈팅 리소스는 DUNGEON DECK의 장르와 맞지 않아 게임에 포함하지 않는다.
+
+## 17. 필요한 사운드 리소스 목록
+
+- sound/MainTheme.mp3: 메인 메뉴 배경 음악
+- sound/BattleTheme.mp3: 전투 배경 음악
+- sound/MenuMove.wav: 메뉴 선택 이동 효과음
+- sound/CardSelect.wav: 카드 선택 효과음
+- sound/Attack.wav: 공격 카드 효과음
+- sound/Guard.wav: 방어 카드 효과음
+- sound/EnemyAttack.wav: 적 공격 효과음
+- sound/BattleWin.wav: 전투 승리 효과음
+- sound/GameOver.wav: 게임 패배 효과음
+- sound/GameClear.wav: 최종 승리 효과음
+
+사운드는 목록만 확정하고 실제 파일 준비와 적용은 3주차에 진행한다.
+
+## 18. 리소스 출처와 관리
+
+Main.png, InGame.png, Player.png는 2026년 9월 6일 과제자가 제공한 파일이다. 원본 파일명은 유지하고 프로젝트의 texture 폴더에 저장한다. 제출 전에 이미지의 생성 경로와 사용 권한을 과제자가 최종 확인한다.
+
+Free_Stylized_2D_Space_Shooter_Pack.zip은 폴더 구성과 리소스 종류를 확인하기 위한 참고 자료로만 사용했다. 게임 장르와 맞지 않는 우주선, 미사일, 우주 배경 리소스는 저장소에 추가하지 않았다.
+
+## 19. 2주차 코드 반영 내용
+
+- 기존 메뉴 입력과 GameState 화면 전환 유지
+- TextureResources 구조체 추가
+- Player 클래스에 HP, 최대 HP, Energy, 텍스처 출력 기능 추가
+- 실행 파일 위치를 기준으로 texture 경로 생성
+- Main.png, InGame.png, Player.png 로드 성공 여부 확인
+- 배경 이미지 화면 크기 조절 출력
+- 알파 채널을 사용한 Player.png 출력
+- 프로그램 종료 시 텍스처 해제
+- Visual Studio 프로젝트에서 texture 파일을 빌드 결과 폴더로 자동 복사
+
+2주차에는 요청된 이미지 삽입과 출력까지만 구현한다. 카드 전투 계산과 적 턴은 3주차에 구현한다.
+
+## 20. 주차별 개발 계획
 
 ### 1주차
 
-- main.cpp
-- GameState를 사용한 메뉴와 화면 상태 전환
+- Git 저장소와 Visual Studio 프로젝트 구성
+- glc2d와 DXSDK 설치 및 복원 구성
+- 메인 메뉴, 설명 화면, 전투 미리보기 구현
 
 ### 2주차
 
-- GameManager.h, GameManager.cpp
-- Player.h, Player.cpp
-- Enemy.h, Enemy.cpp
-- Card.h, Card.cpp
+- 게임 기획서 완성 및 PDF 저장
+- 이미지 리소스 목록과 사운드 리소스 목록 확정
+- texture 폴더와 텍스처 자동 복사 설정
+- 메인 메뉴, 전투 배경, 플레이어 이미지 출력
+- Player 핵심 데이터와 출력 기능 코드 반영
 
 ### 3주차
 
-- Deck.h, Deck.cpp
-- BattleManager.h, BattleManager.cpp
-- RewardManager.h, RewardManager.cpp
-- StageManager.h, StageManager.cpp
+- 적과 카드 이미지 및 사운드 준비
+- Card, Deck, Enemy, BattleManager 구현
+- 카드 사용, Energy, Block, 적 Intent 구현
+- 점수, 승패, 보상, Stage 진행 구현
 
-입력과 glc2d 출력 코드가 커지면 InputManager와 RenderManager를 추가한다. 역할이 적은 클래스를 형식적으로 만들지 않는다.
+### 4주차
 
-## 16. 리소스 계획
-
-모든 이미지와 사운드는 저장소의 Assets 폴더에 포함한다.
-
-예정 이미지 리소스는 다음과 같다.
-
-- 메인 메뉴 배경
-- 플레이어 초상화
-- Training Goblin 이미지
-- Armored Goblin 이미지
-- Dungeon Warden 이미지
-- Strike 카드 이미지
-- Guard 카드 이미지
-- Focus 카드 이미지
-- 카드 테두리와 버튼 이미지
-
-예정 사운드 리소스는 다음과 같다.
-
-- 메인 메뉴 배경 음악
-- 전투 배경 음악
-- 카드 선택 효과음
-- 공격 효과음
-- 방어 효과음
-- 승리 효과음
-- 패배 효과음
-
-리소스의 출처와 라이선스를 Assets/README.md에 기록한다.
-
-## 17. 예외 처리 기준
-
-다음 상황에서도 프로그램이 비정상 종료되지 않아야 한다.
-
-- Energy가 부족한 카드 선택
-- 존재하지 않는 손패 번호 입력
-- DrawPile이 비어 있는 상태
-- DrawPile과 DiscardPile이 모두 비어 있는 상태
-- HP가 0 아래로 내려가는 상황
-- Block보다 큰 Damage를 받는 상황
-- Block보다 작은 Damage를 받는 상황
-- 손패가 5장보다 적은 상황
-- Focus 사용 시 DrawPile이 부족한 상황
-- 전투 종료 직전 추가 입력
-
-## 18. 사용하지 않는 구현 방식
-
-- system("cls")
-- system("pause")
-- goto
-- scanf
-- 카드 이름 문자열만 비교하는 거대한 조건문
-- 적 행동 문자열 비교 방식
-- 매번 srand를 호출하는 방식
-- 불필요한 new와 delete
-- 선언만 있고 구현이 없는 함수
-- 컴파일되지 않는 임시 코드
-- TODO만 남긴 미완성 기능
-
-## 19. 주차별 개발 계획
-
-### 1주차 환경 구성과 초기 개발
-
-- Git 저장소와 Visual Studio 프로젝트 구성
-- glc2d와 DXSDK NuGet 복원 구성
-- 메인 메뉴 구현
-- W, S, 방향키, Enter, Esc 입력 구현
-- HOW TO PLAY 화면 구현
-- 전투 화면 미리보기 구현
-- 1주차 빌드와 실행 검증
-
-### 2주차 기획서와 핵심 데이터 구현
-
-- 본 기획서 보완 및 제출
-- GameManager 상태 구조 구현
-- Player와 Enemy 클래스 구현
-- Card 클래스와 카드 3종 구현
-- 실제 전투 화면 데이터 연결
-
-### 3주차 리소스와 전투 시스템 구현
-
-- 이미지와 사운드 리소스 준비
-- Deck, Hand, DiscardPile 구현
-- 카드 사용과 Energy 처리
-- Enemy Intent와 적 턴 구현
-- 승패 판정과 보상 구현
-- Stage 1부터 Stage 3 구현
-
-### 4주차 완성과 검증
-
-- 모든 리소스를 glc2d 화면에 적용
-- Dungeon Warden 보스전 완성
-- GAME OVER와 GAME CLEAR 완성
-- 밸런스 조정
-- 입력 예외 처리
+- Dungeon Warden 전투와 결과 화면 완성
+- 전체 이미지와 사운드 적용
+- 밸런스 조정과 예외 처리
 - 전체 빌드와 실행 검증
-- README와 제출 문서 최종 수정
-
-## 20. 개발 로그 계획
-
-- LOG 00: 프로젝트와 glc2d 환경 구성
-- LOG 01: 메인 메뉴와 화면 상태 전환
-- LOG 02: Player와 Enemy 데이터
-- LOG 03: Card 클래스와 기본 카드
-- LOG 04: Deck, Hand, DiscardPile
-- LOG 05: 카드 사용과 Energy
-- LOG 06: Enemy Intent와 적 턴
-- LOG 07: 전투 승패
-- LOG 08: 카드 보상
-- LOG 09: Stage 시스템
-- LOG 10: Dungeon Warden
-- LOG 11: glc2d 이미지와 사운드 적용
-- LOG 12: 밸런스와 UI 개선
-- LOG 13: 예외 처리와 최종 리팩터링
-
-각 로그는 실제 기능 구현과 빌드 확인이 끝난 뒤 별도 Commit으로 기록한다.
 
 ## 21. 최종 완료 기준
 
 - 메인 메뉴에서 모든 항목을 선택할 수 있다.
-- GAME START를 선택하면 Stage 1 전투가 시작된다.
+- GAME START 선택 시 Stage 1 전투가 시작된다.
 - 턴 시작 시 카드 5장을 드로우한다.
 - 숫자키로 카드를 사용할 수 있다.
 - 카드 비용만큼 Energy가 감소한다.
 - 공격, Block, 추가 드로우가 정상 처리된다.
 - E로 턴을 종료하면 적 행동이 실행된다.
-- 적 처치 후 보상 카드를 선택할 수 있다.
+- 적 처치 후 점수와 보상을 획득한다.
 - Stage 2와 Stage 3으로 진행할 수 있다.
 - Dungeon Warden 처치 후 GAME CLEAR가 표시된다.
 - 플레이어 사망 후 GAME OVER가 표시된다.
-- Enter를 누르면 메인 메뉴로 돌아간다.
+- 최종 점수가 결과 화면에 표시된다.
 - NuGet 복원 후 프로젝트가 오류 없이 빌드된다.
+- 모든 필요한 리소스가 Git 저장소에 포함된다.
 - 주차별 Commit과 Tag가 올바른 Commit을 가리킨다.
