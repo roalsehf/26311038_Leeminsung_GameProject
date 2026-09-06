@@ -26,18 +26,16 @@ struct GameResources
     int bodyFont = -1;
 };
 
-class GameApplication
+class CApplication
 {
 public:
     static constexpr int ScreenWidth = 1024;
     static constexpr int ScreenHeight = 640;
 
-    bool Initialize();
-    int Run();
-    void Shutdown();
-
+    int Init();
     int Update();
     int Render() const;
+    int Destroy();
 
     void ChangeScene(SceneId nextScene);
     void RequestExit() const;

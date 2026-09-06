@@ -1,17 +1,17 @@
 #include "SceneHowToPlay.h"
 
-#include "GameApplication.h"
+#include "CApplication.h"
 
-void SceneHowToPlay::Update(GameApplication& application, const KEYCODE* keys)
+void SceneHowToPlay::Update(CApplication& application, const KEYCODE* keys)
 {
-    if (GameApplication::IsKeyPressed(keys, VK_RETURN) ||
-        GameApplication::IsKeyPressed(keys, VK_ESCAPE))
+    if (CApplication::IsKeyPressed(keys, VK_RETURN) ||
+        CApplication::IsKeyPressed(keys, VK_ESCAPE))
     {
         application.ChangeScene(SceneId::MainMenu);
     }
 }
 
-void SceneHowToPlay::Render(const GameApplication& application) const
+void SceneHowToPlay::Render(const CApplication& application) const
 {
     const GameResources& resources = application.GetResources();
     application.DrawFullScreenTexture(resources.battleBackground);

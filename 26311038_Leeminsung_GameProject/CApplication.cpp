@@ -1,70 +1,67 @@
-#include "GameApplication.h"
+#include "CApplication.h"
 
 #include <cstdio>
 
+extern CApplication g_app;
+
 namespace
 {
-GameApplication* g_runningApplication = nullptr;
-
-int DispatchUpdate()
+int AppUpdate()
 {
-    return g_runningApplication != nullptr
-        ? g_runningApplication->Update()
-        : 0;
+    return g_app.Update();
 }
 
-int DispatchRender()
+int AppRender()
 {
-    return g_runningApplication != nullptr
-        ? g_runningApplication->Render()
-        : 0;
+    return g_app.Render();
 }
 }
 
-bool GameApplication::Initialize()
+int CApplication::Init()
 {
     if (initialized_)
     {
-        return true;
+        return 0;
     }
 
     const int initResult = g2_InitSdk();
     if (initResult != 0)
     {
         std::fprintf(stderr, "glc2d SDK initialization failed: %d\n", initResult);
-        return false;
+        return 1;
     }
 
-    g_runningApplication = this;
-    g2_SetFrameMove(DispatchUpdate);
-    g2_SetRender(DispatchRender);
+    g2_SetFrameMove(AppUpdate);
+    g2_SetRender(AppRender);
     g2_SetClearColor(0xFF101827);
     g2_SetStateShow(0);
     g2_SetCursorShow(0);
 
     if (!CreateGameWindow() || !CreateFonts() || !LoadTextures())
     {
-        Shutdown();
-        return false;
+        Destroy();
+        return 1;
     }
 
     currentScene_ = SceneId::MainMenu;
     initialized_ = true;
-    return true;
+    std::printf("DUNGEON DECK initialized.\n");
+    return 0;
 }
 
-int GameApplication::Run()
+int CApplication::Update()
 {
-    if (!initialized_)
-    {
-        return 1;
-    }
-
-    std::printf("DUNGEON DECK started with scene based source files.\n");
-    return g2_Run();
+    ActiveScene().Update(*this, g2_GetKeyboard());
+    return 0;
 }
 
-void GameApplication::Shutdown()
+int CApplication::Render() const
+{
+    ActiveScene().Render(*this);
+    return 0;
+}
+
+int CApplication::Destroy()
 {
     ReleaseTexture(resources_.playerTexture);
     ReleaseTexture(resources_.battleBackground);
@@ -77,46 +74,30 @@ void GameApplication::Shutdown()
     }
 
     initialized_ = false;
-
-    if (g_runningApplication == this)
-    {
-        g_runningApplication = nullptr;
-    }
-}
-
-int GameApplication::Update()
-{
-    ActiveScene().Update(*this, g2_GetKeyboard());
     return 0;
 }
 
-int GameApplication::Render() const
-{
-    ActiveScene().Render(*this);
-    return 0;
-}
-
-void GameApplication::ChangeScene(SceneId nextScene)
+void CApplication::ChangeScene(SceneId nextScene)
 {
     currentScene_ = nextScene;
 }
 
-void GameApplication::RequestExit() const
+void CApplication::RequestExit() const
 {
     PostMessage(g2_GetHwnd(), WM_CLOSE, 0, 0);
 }
 
-const GameResources& GameApplication::GetResources() const
+const GameResources& CApplication::GetResources() const
 {
     return resources_;
 }
 
-const Player& GameApplication::GetPlayer() const
+const Player& CApplication::GetPlayer() const
 {
     return player_;
 }
 
-void GameApplication::DrawFullScreenTexture(int textureKey) const
+void CApplication::DrawFullScreenTexture(int textureKey) const
 {
     if (textureKey < 0)
     {
@@ -139,12 +120,12 @@ void GameApplication::DrawFullScreenTexture(int textureKey) const
     g2_Draw2D(textureKey, nullptr, &position, &scale);
 }
 
-bool GameApplication::IsKeyPressed(const KEYCODE* keys, int key)
+bool CApplication::IsKeyPressed(const KEYCODE* keys, int key)
 {
     return keys != nullptr && keys[key] == EINPUT_DOWN;
 }
 
-bool GameApplication::CreateGameWindow()
+bool CApplication::CreateGameWindow()
 {
     const int createResult = g2_CreateWin(
         100,
@@ -164,7 +145,7 @@ bool GameApplication::CreateGameWindow()
     return true;
 }
 
-bool GameApplication::CreateFonts()
+bool CApplication::CreateFonts()
 {
     resources_.headingFont = g2_FontCreate("Arial", 30, 0);
     resources_.menuFont = g2_FontCreate("Arial", 27, 0);
@@ -181,7 +162,7 @@ bool GameApplication::CreateFonts()
     return true;
 }
 
-bool GameApplication::LoadTextures()
+bool CApplication::LoadTextures()
 {
     const std::string mainPath = BuildTexturePath("Main.png");
     const std::string battlePath = BuildTexturePath("InGame.png");
@@ -203,7 +184,7 @@ bool GameApplication::LoadTextures()
     return true;
 }
 
-void GameApplication::ReleaseTexture(int& textureKey)
+void CApplication::ReleaseTexture(int& textureKey)
 {
     if (textureKey >= 0)
     {
@@ -212,7 +193,7 @@ void GameApplication::ReleaseTexture(int& textureKey)
     }
 }
 
-std::string GameApplication::BuildTexturePath(const char* fileName) const
+std::string CApplication::BuildTexturePath(const char* fileName) const
 {
     char executablePath[MAX_PATH] = {};
     const DWORD pathLength = GetModuleFileNameA(nullptr, executablePath, MAX_PATH);
@@ -237,7 +218,7 @@ std::string GameApplication::BuildTexturePath(const char* fileName) const
     return directory + "texture\\" + fileName;
 }
 
-GameScene& GameApplication::ActiveScene()
+GameScene& CApplication::ActiveScene()
 {
     switch (currentScene_)
     {
@@ -253,7 +234,7 @@ GameScene& GameApplication::ActiveScene()
     }
 }
 
-const GameScene& GameApplication::ActiveScene() const
+const GameScene& CApplication::ActiveScene() const
 {
     switch (currentScene_)
     {

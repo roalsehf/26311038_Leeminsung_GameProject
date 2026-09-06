@@ -1,33 +1,33 @@
 #include "SceneMainMenu.h"
 
-#include "GameApplication.h"
+#include "CApplication.h"
 
-void SceneMainMenu::Update(GameApplication& application, const KEYCODE* keys)
+void SceneMainMenu::Update(CApplication& application, const KEYCODE* keys)
 {
-    if (GameApplication::IsKeyPressed(keys, VK_UP) ||
-        GameApplication::IsKeyPressed(keys, 'W'))
+    if (CApplication::IsKeyPressed(keys, VK_UP) ||
+        CApplication::IsKeyPressed(keys, 'W'))
     {
         MoveSelection(-1);
     }
 
-    if (GameApplication::IsKeyPressed(keys, VK_DOWN) ||
-        GameApplication::IsKeyPressed(keys, 'S'))
+    if (CApplication::IsKeyPressed(keys, VK_DOWN) ||
+        CApplication::IsKeyPressed(keys, 'S'))
     {
         MoveSelection(1);
     }
 
-    if (GameApplication::IsKeyPressed(keys, VK_RETURN))
+    if (CApplication::IsKeyPressed(keys, VK_RETURN))
     {
         SelectCurrentItem(application);
     }
 
-    if (GameApplication::IsKeyPressed(keys, VK_ESCAPE))
+    if (CApplication::IsKeyPressed(keys, VK_ESCAPE))
     {
         application.RequestExit();
     }
 }
 
-void SceneMainMenu::Render(const GameApplication& application) const
+void SceneMainMenu::Render(const CApplication& application) const
 {
     const GameResources& resources = application.GetResources();
     application.DrawFullScreenTexture(resources.mainBackground);
@@ -71,7 +71,7 @@ void SceneMainMenu::MoveSelection(int direction)
     selectedMenu_ = (selectedMenu_ + direction + MenuCount) % MenuCount;
 }
 
-void SceneMainMenu::SelectCurrentItem(GameApplication& application) const
+void SceneMainMenu::SelectCurrentItem(CApplication& application) const
 {
     switch (selectedMenu_)
     {

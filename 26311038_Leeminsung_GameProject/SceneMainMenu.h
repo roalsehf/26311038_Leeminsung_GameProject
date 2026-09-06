@@ -5,14 +5,14 @@
 class SceneMainMenu final : public GameScene
 {
 public:
-    void Update(GameApplication& application, const KEYCODE* keys) override;
-    void Render(const GameApplication& application) const override;
+    void Update(CApplication& application, const KEYCODE* keys) override;
+    void Render(const CApplication& application) const override;
 
 private:
     static constexpr int MenuCount = 3;
 
     void MoveSelection(int direction);
-    void SelectCurrentItem(GameApplication& application) const;
+    void SelectCurrentItem(CApplication& application) const;
 
     int selectedMenu_ = 0;
 };

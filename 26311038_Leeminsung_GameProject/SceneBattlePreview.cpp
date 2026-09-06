@@ -1,17 +1,17 @@
 #include "SceneBattlePreview.h"
 
-#include "GameApplication.h"
+#include "CApplication.h"
 
-void SceneBattlePreview::Update(GameApplication& application, const KEYCODE* keys)
+void SceneBattlePreview::Update(CApplication& application, const KEYCODE* keys)
 {
-    if (GameApplication::IsKeyPressed(keys, VK_RETURN) ||
-        GameApplication::IsKeyPressed(keys, VK_ESCAPE))
+    if (CApplication::IsKeyPressed(keys, VK_RETURN) ||
+        CApplication::IsKeyPressed(keys, VK_ESCAPE))
     {
         application.ChangeScene(SceneId::MainMenu);
     }
 }
 
-void SceneBattlePreview::Render(const GameApplication& application) const
+void SceneBattlePreview::Render(const CApplication& application) const
 {
     const GameResources& resources = application.GetResources();
     const Player& player = application.GetPlayer();

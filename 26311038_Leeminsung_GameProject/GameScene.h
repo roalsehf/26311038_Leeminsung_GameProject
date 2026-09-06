@@ -2,13 +2,13 @@
 
 #include <glc2d.h>
 
-class GameApplication;
+class CApplication;
 
 class GameScene
 {
 public:
     virtual ~GameScene() = default;
 
-    virtual void Update(GameApplication& application, const KEYCODE* keys) = 0;
-    virtual void Render(const GameApplication& application) const = 0;
+    virtual void Update(CApplication& application, const KEYCODE* keys) = 0;
+    virtual void Render(const CApplication& application) const = 0;
 };
