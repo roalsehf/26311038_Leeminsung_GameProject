@@ -138,7 +138,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameApplication.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="SceneBattlePreview.cpp" />
+    <ClCompile Include="SceneHowToPlay.cpp" />
+    <ClCompile Include="SceneMainMenu.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameApplication.h" />
+    <ClInclude Include="GameScene.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="SceneBattlePreview.h" />
+    <ClInclude Include="SceneHowToPlay.h" />
+    <ClInclude Include="SceneMainMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
