@@ -139,6 +139,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CApplication.cpp" />
+    <ClCompile Include="CombatState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SceneBattlePreview.cpp" />
@@ -147,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
+    <ClInclude Include="CombatState.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SceneBattlePreview.h" />
@@ -158,6 +160,12 @@
     <None Include="texture\InGame.png" />
     <None Include="texture\Main.png" />
     <None Include="texture\Player.png" />
+    <None Include="texture\Goblin.png" />
+    <None Include="texture\Goblin_Hit.png" />
+    <None Include="texture\Player_Hit.png" />
+    <None Include="texture\Player_Guard.png" />
+    <None Include="texture\J.png" />
+    <None Include="texture\K.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

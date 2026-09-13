@@ -1,10 +1,18 @@
 #include "Player.h"
 
-#include <glc2d.h>
+#include <algorithm>
 
-void Player::SetTexture(int textureKey)
+void Player::Reset()
 {
-    textureKey_ = textureKey;
+    hp_ = MaxHp;
+}
+
+void Player::TakeDamage(int damage)
+{
+    if (damage > 0)
+    {
+        hp_ = std::max(0, hp_ - damage);
+    }
 }
 
 int Player::GetHp() const
@@ -14,25 +22,5 @@ int Player::GetHp() const
 
 int Player::GetMaxHp() const
 {
-    return maxHp_;
-}
-
-int Player::GetEnergy() const
-{
-    return energy_;
-}
-
-void Player::Draw() const
-{
-    if (textureKey_ < 0)
-    {
-        return;
-    }
-
-    VEC2 position(650.0f, 225.0f);
-    VEC2 scale(0.26f, 0.26f);
-
-    g2_DrawAlphaOption(1);
-    g2_Draw2D(textureKey_, nullptr, &position, &scale);
-    g2_DrawAlphaOption(0);
+    return MaxHp;
 }

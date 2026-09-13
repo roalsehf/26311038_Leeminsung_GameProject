@@ -18,6 +18,9 @@
     <ClCompile Include="CApplication.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="CombatState.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -36,6 +39,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CombatState.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="GameScene.h">
@@ -63,6 +69,24 @@
       <Filter>리소스 파일</Filter>
     </None>
     <None Include="texture\Player.png">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="texture\Goblin.png">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="texture\Goblin_Hit.png">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="texture\Player_Hit.png">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="texture\Player_Guard.png">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="texture\J.png">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="texture\K.png">
       <Filter>리소스 파일</Filter>
     </None>
   </ItemGroup>

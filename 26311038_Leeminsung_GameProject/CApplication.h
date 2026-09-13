@@ -4,7 +4,6 @@
 
 #include <string>
 
-#include "Player.h"
 #include "SceneBattlePreview.h"
 #include "SceneHowToPlay.h"
 #include "SceneMainMenu.h"
@@ -21,6 +20,12 @@ struct GameResources
     int mainBackground = -1;
     int battleBackground = -1;
     int playerTexture = -1;
+    int playerHit = -1;
+    int playerGuard = -1;
+    int goblin = -1;
+    int goblinHit = -1;
+    int attackKey = -1;
+    int guardKey = -1;
     int headingFont = -1;
     int menuFont = -1;
     int bodyFont = -1;
@@ -41,9 +46,10 @@ public:
     void RequestExit() const;
 
     const GameResources& GetResources() const;
-    const Player& GetPlayer() const;
 
     void DrawFullScreenTexture(int textureKey) const;
+    void DrawTexture(int textureKey, const RECT& destination,
+        const RECT* source = nullptr, DWORD color = 0xFFFFFFFF) const;
 
     static bool IsKeyPressed(const KEYCODE* keys, int key);
 
@@ -61,7 +67,6 @@ private:
     bool windowCreated_ = false;
     SceneId currentScene_ = SceneId::MainMenu;
     GameResources resources_;
-    Player player_;
     SceneMainMenu mainMenuScene_;
     SceneHowToPlay howToPlayScene_;
     SceneBattlePreview battlePreviewScene_;

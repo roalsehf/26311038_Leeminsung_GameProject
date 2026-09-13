@@ -26,32 +26,32 @@ void SceneHowToPlay::Render(const CApplication& application) const
         resources.bodyFont,
         { 115, 120, 920, 155 },
         0xFFE6EDF3,
-        "Draw five cards at the beginning of each player turn.");
+        "Defeat three goblins in a row to clear the battle.");
     g2_FontDrawText(
         resources.bodyFont,
         { 115, 168, 920, 203 },
         0xFFE6EDF3,
-        "Use Energy to play Attack and Skill cards.");
+        "J: Attack the goblin for 8 damage.");
     g2_FontDrawText(
         resources.bodyFont,
         { 115, 216, 920, 251 },
         0xFFE6EDF3,
-        "Strike deals damage. Guard adds Block. Focus draws a card.");
+        "K: Guard the counterattack. 60% chance to take no damage.");
     g2_FontDrawText(
         resources.bodyFont,
         { 115, 264, 920, 299 },
         0xFFE6EDF3,
-        "End the turn to let the enemy perform its displayed action.");
+        "Press K before the counterattack lands. One attempt per attack.");
     g2_FontDrawText(
         resources.bodyFont,
         { 115, 312, 920, 347 },
         0xFFE6EDF3,
-        "Defeat the Dungeon Warden in Stage 3 to clear the game.");
+        "A failed guard or an unguarded counterattack deals 7 damage.");
     g2_FontDrawText(
         resources.bodyFont,
         { 115, 400, 920, 435 },
         0xFF70E000,
-        "Starting HP: 50   Energy: 3   Hand: 5 cards");
+        "Player HP: 50   Goblin HP: 32   Result: Retry or Main Menu");
     g2_FontDrawText(
         resources.bodyFont,
         { 310, 550, 820, 590 },

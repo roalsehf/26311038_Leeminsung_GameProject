@@ -63,6 +63,12 @@ int CApplication::Render() const
 
 int CApplication::Destroy()
 {
+    ReleaseTexture(resources_.guardKey);
+    ReleaseTexture(resources_.attackKey);
+    ReleaseTexture(resources_.goblinHit);
+    ReleaseTexture(resources_.goblin);
+    ReleaseTexture(resources_.playerGuard);
+    ReleaseTexture(resources_.playerHit);
     ReleaseTexture(resources_.playerTexture);
     ReleaseTexture(resources_.battleBackground);
     ReleaseTexture(resources_.mainBackground);
@@ -79,6 +85,10 @@ int CApplication::Destroy()
 
 void CApplication::ChangeScene(SceneId nextScene)
 {
+    if (nextScene == SceneId::BattlePreview)
+    {
+        battlePreviewScene_.Reset();
+    }
     currentScene_ = nextScene;
 }
 
@@ -90,11 +100,6 @@ void CApplication::RequestExit() const
 const GameResources& CApplication::GetResources() const
 {
     return resources_;
-}
-
-const Player& CApplication::GetPlayer() const
-{
-    return player_;
 }
 
 void CApplication::DrawFullScreenTexture(int textureKey) const
@@ -123,6 +128,28 @@ void CApplication::DrawFullScreenTexture(int textureKey) const
 bool CApplication::IsKeyPressed(const KEYCODE* keys, int key)
 {
     return keys != nullptr && keys[key] == EINPUT_DOWN;
+}
+
+void CApplication::DrawTexture(int textureKey, const RECT& destination,
+    const RECT* source, DWORD color) const
+{
+    if (textureKey < 0)
+    {
+        return;
+    }
+    const int width = source != nullptr
+        ? source->right - source->left : g2_TextureWidth(textureKey);
+    const int height = source != nullptr
+        ? source->bottom - source->top : g2_TextureHeight(textureKey);
+    if (width <= 0 || height <= 0)
+    {
+        return;
+    }
+    VEC2 position(static_cast<float>(destination.left), static_cast<float>(destination.top));
+    VEC2 scale(static_cast<float>(destination.right - destination.left) / width,
+        static_cast<float>(destination.bottom - destination.top) / height);
+    g2_DrawAlphaOption(0);
+    g2_Draw2D(textureKey, source, &position, &scale, nullptr, 0.0f, color);
 }
 
 bool CApplication::CreateGameWindow()
@@ -164,23 +191,32 @@ bool CApplication::CreateFonts()
 
 bool CApplication::LoadTextures()
 {
-    const std::string mainPath = BuildTexturePath("Main.png");
-    const std::string battlePath = BuildTexturePath("InGame.png");
-    const std::string playerPath = BuildTexturePath("Player.png");
-
-    resources_.mainBackground = g2_TextureLoad(mainPath.c_str());
-    resources_.battleBackground = g2_TextureLoad(battlePath.c_str());
-    resources_.playerTexture = g2_TextureLoad(playerPath.c_str());
-
-    if (resources_.mainBackground < 0 ||
-        resources_.battleBackground < 0 ||
-        resources_.playerTexture < 0)
+    const struct TextureEntry
     {
-        std::fprintf(stderr, "One or more texture files could not be loaded.\n");
-        return false;
+        const char* file;
+        int* key;
+    } entries[] =
+    {
+        { "Main.png", &resources_.mainBackground },
+        { "InGame.png", &resources_.battleBackground },
+        { "Player.png", &resources_.playerTexture },
+        { "Player_Hit.png", &resources_.playerHit },
+        { "Player_Guard.png", &resources_.playerGuard },
+        { "Goblin.png", &resources_.goblin },
+        { "Goblin_Hit.png", &resources_.goblinHit },
+        { "J.png", &resources_.attackKey },
+        { "K.png", &resources_.guardKey }
+    };
+    for (const TextureEntry& entry : entries)
+    {
+        const std::string path = BuildTexturePath(entry.file);
+        *entry.key = g2_TextureLoad(path.c_str());
+        if (*entry.key < 0)
+        {
+            std::fprintf(stderr, "Cannot load texture: %s\n", path.c_str());
+            return false;
+        }
     }
-
-    player_.SetTexture(resources_.playerTexture);
     return true;
 }
 
