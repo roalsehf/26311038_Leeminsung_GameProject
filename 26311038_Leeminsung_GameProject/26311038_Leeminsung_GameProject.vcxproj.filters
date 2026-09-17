@@ -89,5 +89,29 @@
     <None Include="texture\K.png">
       <Filter>리소스 파일</Filter>
     </None>
+    <None Include="sound\MainMenu_InDarkness.ogg">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sound\MainMenu_InDarkness.wav">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sound\Boss_Alternative_Welcome.mp3">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sound\Player_ProjectileCast01.ogg">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sound\Player_ProjectileCast01.wav">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sound\UI_Select.wav">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sound\Monster_KnightSwing.wav">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="sound\Monster_KnightReady.wav">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

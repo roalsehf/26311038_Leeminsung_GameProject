@@ -16,6 +16,7 @@ void SceneBattlePreview::Update(CApplication& application, const KEYCODE* keys)
     const long long now = g2_TimeGetTime();
     double elapsed = static_cast<double>(now - previousTime_) / 1000.0;
     previousTime_ = now;
+
     // A focus change must not skip an entire counterattack or result animation.
     if (elapsed < 0.0) elapsed = 0.0;
     if (elapsed > 0.1) elapsed = 0.1;
@@ -44,10 +45,17 @@ void SceneBattlePreview::Update(CApplication& application, const KEYCODE* keys)
     // Do not carry an input from a previous phase into a freshly opened turn.
     if (battle_.GetPhase() != phase)
     {
+        if (battle_.GetPhase() == BattlePhase::EnemyFeedback)
+        {
+            application.PlaySound(battle_.LastGuardSucceeded()
+                ? application.GetResources().guardSuccessSound
+                : application.GetResources().guardFailSound);
+        }
         return;
     }
     const bool attack = CApplication::IsKeyPressed(keys, 'J');
     const bool guard = CApplication::IsKeyPressed(keys, 'K');
+
     // One action per frame. During a counterattack only K is accepted.
     if (phase == BattlePhase::EnemyWindup && guard)
     {
@@ -55,7 +63,12 @@ void SceneBattlePreview::Update(CApplication& application, const KEYCODE* keys)
     }
     else if (attack)
     {
-        if (battle_.Attack()) attackKeySeconds_ = 0.25;
+        if (battle_.Attack())
+        {
+            attackKeySeconds_ = 0.25;
+            application.PlaySound(application.GetResources().playerAttackSound);
+            application.PlaySound(application.GetResources().guardFailSound);
+        }
     }
     else if (guard)
     {

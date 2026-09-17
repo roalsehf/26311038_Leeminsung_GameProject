@@ -8,16 +8,19 @@ void SceneMainMenu::Update(CApplication& application, const KEYCODE* keys)
         CApplication::IsKeyPressed(keys, 'W'))
     {
         MoveSelection(-1);
+        application.PlaySound(application.GetResources().uiSelectSound);
     }
 
     if (CApplication::IsKeyPressed(keys, VK_DOWN) ||
         CApplication::IsKeyPressed(keys, 'S'))
     {
         MoveSelection(1);
+        application.PlaySound(application.GetResources().uiSelectSound);
     }
 
     if (CApplication::IsKeyPressed(keys, VK_RETURN))
     {
+        application.PlaySound(application.GetResources().uiSelectSound);
         SelectCurrentItem(application);
     }
 
