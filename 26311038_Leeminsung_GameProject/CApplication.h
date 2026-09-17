@@ -26,6 +26,12 @@ struct GameResources
     int goblinHit = -1;
     int attackKey = -1;
     int guardKey = -1;
+    int mainMenuMusic = -1;
+    int stageMusic = -1;
+    int playerAttackSound = -1;
+    int uiSelectSound = -1;
+    int guardSuccessSound = -1;
+    int guardFailSound = -1;
     int headingFont = -1;
     int menuFont = -1;
     int bodyFont = -1;
@@ -51,14 +57,21 @@ public:
     void DrawTexture(int textureKey, const RECT& destination,
         const RECT* source = nullptr, DWORD color = 0xFFFFFFFF) const;
 
+    void PlaySound(int soundKey) const;
+
     static bool IsKeyPressed(const KEYCODE* keys, int key);
 
 private:
     bool CreateGameWindow();
     bool CreateFonts();
     bool LoadTextures();
+    bool LoadSounds();
     void ReleaseTexture(int& textureKey);
+    void ReleaseSound(int& soundKey);
     std::string BuildTexturePath(const char* fileName) const;
+    std::string BuildSoundPath(const char* fileName) const;
+    void StartMusicForScene(SceneId scene);
+    void StopMusic();
 
     GameScene& ActiveScene();
     const GameScene& ActiveScene() const;

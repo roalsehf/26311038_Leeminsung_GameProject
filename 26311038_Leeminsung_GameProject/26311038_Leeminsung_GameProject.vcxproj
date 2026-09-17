@@ -166,6 +166,14 @@
     <None Include="texture\Player_Guard.png" />
     <None Include="texture\J.png" />
     <None Include="texture\K.png" />
+    <None Include="sound\MainMenu_InDarkness.ogg" />
+    <None Include="sound\MainMenu_InDarkness.wav" />
+    <None Include="sound\Boss_Alternative_Welcome.mp3" />
+    <None Include="sound\Player_ProjectileCast01.ogg" />
+    <None Include="sound\Player_ProjectileCast01.wav" />
+    <None Include="sound\UI_Select.wav" />
+    <None Include="sound\Monster_KnightSwing.wav" />
+    <None Include="sound\Monster_KnightReady.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -184,5 +192,12 @@
     </ItemGroup>
     <MakeDir Directories="$(OutDir)texture" />
     <Copy SourceFiles="@(TextureFile)" DestinationFolder="$(OutDir)texture" SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="CopySoundResources" AfterTargets="Build">
+    <ItemGroup>
+      <SoundFile Include="$(ProjectDir)sound\*.*" />
+    </ItemGroup>
+    <MakeDir Directories="$(OutDir)sound" />
+    <Copy SourceFiles="@(SoundFile)" DestinationFolder="$(OutDir)sound" SkipUnchangedFiles="true" />
   </Target>
 </Project>

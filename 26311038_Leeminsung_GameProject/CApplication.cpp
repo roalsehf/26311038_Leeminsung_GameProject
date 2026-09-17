@@ -37,7 +37,7 @@ int CApplication::Init()
     g2_SetStateShow(0);
     g2_SetCursorShow(0);
 
-    if (!CreateGameWindow() || !CreateFonts() || !LoadTextures())
+    if (!CreateGameWindow() || !CreateFonts() || !LoadTextures() || !LoadSounds())
     {
         Destroy();
         return 1;
@@ -45,6 +45,7 @@ int CApplication::Init()
 
     currentScene_ = SceneId::MainMenu;
     initialized_ = true;
+    StartMusicForScene(currentScene_);
     std::printf("DUNGEON DECK initialized.\n");
     return 0;
 }
@@ -63,6 +64,13 @@ int CApplication::Render() const
 
 int CApplication::Destroy()
 {
+    StopMusic();
+    ReleaseSound(resources_.guardFailSound);
+    ReleaseSound(resources_.guardSuccessSound);
+    ReleaseSound(resources_.uiSelectSound);
+    ReleaseSound(resources_.playerAttackSound);
+    ReleaseSound(resources_.stageMusic);
+    ReleaseSound(resources_.mainMenuMusic);
     ReleaseTexture(resources_.guardKey);
     ReleaseTexture(resources_.attackKey);
     ReleaseTexture(resources_.goblinHit);
@@ -89,7 +97,12 @@ void CApplication::ChangeScene(SceneId nextScene)
     {
         battlePreviewScene_.Reset();
     }
-    currentScene_ = nextScene;
+    if (currentScene_ != nextScene)
+    {
+        StopMusic();
+        currentScene_ = nextScene;
+        StartMusicForScene(currentScene_);
+    }
 }
 
 void CApplication::RequestExit() const
@@ -100,6 +113,17 @@ void CApplication::RequestExit() const
 const GameResources& CApplication::GetResources() const
 {
     return resources_;
+}
+
+void CApplication::PlaySound(int soundKey) const
+{
+    if (soundKey < 0)
+    {
+        return;
+    }
+
+    g2_SoundReset(soundKey);
+    g2_SoundPlay(soundKey);
 }
 
 void CApplication::DrawFullScreenTexture(int textureKey) const
@@ -220,12 +244,50 @@ bool CApplication::LoadTextures()
     return true;
 }
 
+bool CApplication::LoadSounds()
+{
+    const struct SoundEntry
+    {
+        const char* file;
+        int* key;
+    } entries[] =
+    {
+        { "MainMenu_InDarkness.wav", &resources_.mainMenuMusic },
+        { "Boss_Alternative_Welcome.mp3", &resources_.stageMusic },
+        { "Player_ProjectileCast01.wav", &resources_.playerAttackSound },
+        { "UI_Select.wav", &resources_.uiSelectSound },
+        { "Monster_KnightSwing.wav", &resources_.guardSuccessSound },
+        { "Monster_KnightReady.wav", &resources_.guardFailSound }
+    };
+
+    for (const SoundEntry& entry : entries)
+    {
+        const std::string path = BuildSoundPath(entry.file);
+        *entry.key = g2_SoundLoad(path.c_str());
+        if (*entry.key < 0)
+        {
+            std::fprintf(stderr, "Cannot load sound: %s\n", path.c_str());
+            return false;
+        }
+    }
+    return true;
+}
+
 void CApplication::ReleaseTexture(int& textureKey)
 {
     if (textureKey >= 0)
     {
         g2_TextureRelease(textureKey);
         textureKey = -1;
+    }
+}
+
+void CApplication::ReleaseSound(int& soundKey)
+{
+    if (soundKey >= 0)
+    {
+        g2_SoundRelease(soundKey);
+        soundKey = -1;
     }
 }
 
@@ -252,6 +314,55 @@ std::string CApplication::BuildTexturePath(const char* fileName) const
     }
 
     return directory + "texture\\" + fileName;
+}
+
+std::string CApplication::BuildSoundPath(const char* fileName) const
+{
+    char executablePath[MAX_PATH] = {};
+    const DWORD pathLength = GetModuleFileNameA(nullptr, executablePath, MAX_PATH);
+
+    if (pathLength == 0 || pathLength >= MAX_PATH)
+    {
+        return std::string("sound\\") + fileName;
+    }
+
+    std::string directory(executablePath, pathLength);
+    const std::string::size_type slashPosition = directory.find_last_of("\\/");
+
+    if (slashPosition != std::string::npos)
+    {
+        directory.erase(slashPosition + 1);
+    }
+    else
+    {
+        directory.clear();
+    }
+
+    return directory + "sound\\" + fileName;
+}
+
+void CApplication::StartMusicForScene(SceneId scene)
+{
+    const int musicKey = scene == SceneId::MainMenu
+        ? resources_.mainMenuMusic :
+        scene == SceneId::BattlePreview ? resources_.stageMusic : -1;
+    if (musicKey >= 0)
+    {
+        g2_SoundReset(musicKey);
+        g2_SoundPlay(musicKey, true);
+    }
+}
+
+void CApplication::StopMusic()
+{
+    if (resources_.mainMenuMusic >= 0)
+    {
+        g2_SoundStop(resources_.mainMenuMusic);
+    }
+    if (resources_.stageMusic >= 0)
+    {
+        g2_SoundStop(resources_.stageMusic);
+    }
 }
 
 GameScene& CApplication::ActiveScene()
